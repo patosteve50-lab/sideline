@@ -71,13 +71,13 @@ export const paidAdsMinimumStage = {
       `(5) How to measure organic traction before considering paid promotion. ` +
       `Show specific weekly actions and expected outcomes.`,
     outputFormat: OUTPUT_FORMAT.CAPTION_STRATEGY,
-    constraints: {
+    constraints: (profile, move) => ({
       budget: move.budget,
       focus: 'organic only',
       platforms: 'TikTok, Instagram, YouTube',
       timeline: '4-8 weeks',
       stage: STAGES.BEDROOM
-    }
+    })
   },
   
   severity: SEVERITY.BLOCK
@@ -226,13 +226,13 @@ export const playlistServicesMinimumStage = {
              `Show how $${serviceCost} can fund content creation that makes pitching more effective.`;
     },
     outputFormat: OUTPUT_FORMAT.CAPTION_STRATEGY,
-    constraints: {
+    constraints: (profile, move) => ({
       cost: '$0 for outreach',
       budget: 'reallocate to content',
       approach: 'direct + personalized',
       timeline: '2-3 weeks',
       stage: profile.stage
-    }
+    })
   },
   
   severity: SEVERITY.BLOCK
@@ -309,13 +309,13 @@ export const publicistMinimumStage = {
              `Show 3-month roadmap to PR-readiness.`;
     },
     outputFormat: OUTPUT_FORMAT.RELEASE_TIMELINE,
-    constraints: {
+    constraints: (profile, move) => ({
       budget: move.budget,
       focus: 'story building',
       timeline: '3 months',
       target: 'PR-ready metrics',
       stage: profile.stage
-    }
+    })
   },
   
   severity: SEVERITY.BLOCK

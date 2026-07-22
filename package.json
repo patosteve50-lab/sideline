@@ -8,7 +8,19 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
     "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
-    "cli": "node src/cli/test-rules.js"
+    "assess": "node src/cli/assess.js",
+    "demo:bedroom-video": "node src/cli/assess.js bedroom-video",
+    "demo:bedroom-line-item": "node src/cli/assess.js bedroom-line-item",
+    "demo:local-video": "node src/cli/assess.js local-video",
+    "demo:regional-pr": "node src/cli/assess.js regional-pr",
+    "demo:breaking-high": "node src/cli/assess.js breaking-high",
+    "demo:album-low": "node src/cli/assess.js album-low-listeners",
+    "demo:no-capture": "node src/cli/assess.js release-no-capture",
+    "demo:too-soon": "node src/cli/assess.js release-too-soon",
+    "demo:bedroom-ads": "node src/cli/assess.js bedroom-paid-ads",
+    "demo:local-ads": "node src/cli/assess.js local-ads-no-capture",
+    "demo:playlist": "node src/cli/assess.js bedroom-playlist",
+    "demo:publicist": "node src/cli/assess.js local-publicist"
   },
   "keywords": [
     "music",
