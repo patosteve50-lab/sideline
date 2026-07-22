@@ -249,7 +249,7 @@ export const publicistMinimumStage = {
   
   trigger: (profile, move) => {
     const isPR = move.lineItems?.some(item =>
-      item.name.toLowerCase().includes('pr') ||
+      /\bpr\b/.test(item.name.toLowerCase()) ||
       item.name.toLowerCase().includes('publicist') ||
       item.name.toLowerCase().includes('public relations') ||
       item.category === 'pr'
