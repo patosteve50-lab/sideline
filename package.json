@@ -20,7 +20,8 @@
     "demo:bedroom-ads": "node src/cli/assess.js bedroom-paid-ads",
     "demo:local-ads": "node src/cli/assess.js local-ads-no-capture",
     "demo:playlist": "node src/cli/assess.js bedroom-playlist",
-    "demo:publicist": "node src/cli/assess.js local-publicist"
+    "demo:publicist": "node src/cli/assess.js local-publicist",
+    "demo:live": "node src/cli/assess.js"
   },
   "keywords": [
     "music",
