@@ -43,6 +43,84 @@ export function generateMockOutput(prompt, outputFormat, constraints) {
  */
 function generateBudgetBreakdown(constraints) {
   const maxBudget = constraints.maxBudget || 500;
+  
+  // Handle special case: regional PR alternatives
+  if (constraints.option1 && constraints.option2) {
+    return `TWO STRATEGIC ALTERNATIVES FOR REGIONAL STAGE
+
+OPTION 1: 3-MONTH PR RETAINER ($1,200)
+
+MONTH 1 - FOUNDATION ($400)
+• Relationship building with journalists and bloggers
+• Pitch development and press kit refinement
+• Target list creation (20-30 relevant outlets)
+• Initial outreach to warm contacts
+• Expected: 2-3 responses, relationship groundwork
+
+MONTH 2 - OUTREACH ($400)
+• Full pitch campaign to target list
+• Follow-up with interested journalists
+• Secure interview opportunities
+• Coordinate feature timing with release
+• Expected: 3-5 confirmed placements in pipeline
+
+MONTH 3 - PLACEMENTS ($400)
+• Placements go live (blogs, magazines, podcasts)
+• Amplify coverage across social channels
+• Leverage placements for playlist pitching
+• Document results and ROI
+• Expected: 5-8 published features/interviews
+
+TOTAL: $1,200 over 3 months
+REALISTIC OUTCOME: 5-8 press placements, 2-3 podcast interviews, increased credibility for playlist pitching
+
+WHY 3 MONTHS MINIMUM:
+Month 1 is setup, Month 2 is execution, Month 3 is when results materialize. Shorter retainers pay for setup without reaching the payoff phase.
+
+---
+
+OPTION 2: DIRECT OUTREACH STRATEGY ($1,200)
+
+PLAYLIST CURATOR OUTREACH ($500)
+• Research and target 50-100 independent curators
+• Personalized pitches via SubmitHub, email, Instagram DM
+• Focus on micro-playlists (1K-10K followers) in your genre
+• Follow-up sequence over 4 weeks
+• Expected: 8-12 playlist placements
+
+MUSIC BLOGGER OUTREACH ($300)
+• Identify 30-40 active music blogs in your niche
+• Create compelling press kit and one-sheet
+• Personalized email pitches with streaming links
+• Follow-up with engaged bloggers
+• Expected: 3-5 blog features
+
+INFLUENCER COLLABORATION ($200)
+• Partner with 5-10 micro-influencers (10K-50K followers)
+• Offer early access, exclusive content, or small fee
+• Create shareable content (Reels, TikToks) featuring your music
+• Cross-promote on both accounts
+• Expected: 50K-100K impressions, 500-1K new listeners
+
+CONTENT CREATION ($200)
+• Professional photos for press kit
+• Short-form video content for pitching
+• Lyric videos and visualizers
+• Behind-the-scenes content for engagement
+
+TOTAL: $1,200 one-time investment
+REALISTIC OUTCOME: 8-12 playlist adds, 3-5 blog features, 50K+ impressions, 500-1K new listeners
+
+WHY THIS WORKS FASTER:
+Direct outreach puts you in control. You're not waiting for a publicist to build relationships—you're building them yourself. Results start appearing in weeks, not months. Plus, you learn the process for future releases.
+
+RECOMMENDATION:
+If you have 3 months before your release and want press credibility: Choose Option 1.
+If you need faster results and want to own the relationships: Choose Option 2.
+
+At Regional stage with 12,000 monthly listeners, both approaches are viable. Option 2 gives you more control and faster feedback, while Option 1 builds long-term media relationships.`;
+  }
+  
   const stage = getStageFromConstraints(constraints);
   
   if (stage === 'bedroom') {

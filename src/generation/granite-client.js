@@ -160,8 +160,15 @@ function extractOutput(prediction) {
  * Generate creative output using Granite via Replicate
  * Falls back to mock generator on any error
  */
-export async function generateCreativeOutput(redirectAction, profile, move) {
+export async function generateCreativeOutput(redirectAction, profile, move, options = {}) {
+  const { forceMock = false } = options;
   const apiToken = process.env.REPLICATE_API_TOKEN;
+  
+  // If forceMock flag is set, use mock immediately
+  if (forceMock) {
+    console.log('ℹ️  Mock mode forced (--mock flag), using mock generator');
+    return await generateMock(redirectAction, profile, move);
+  }
   
   // If no API token, use mock immediately
   if (!apiToken) {
