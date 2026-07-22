@@ -5,41 +5,41 @@
 
 export const STAGES = {
   BEDROOM: 'bedroom',
-  LOCAL: 'local',
-  REGIONAL: 'regional',
-  BREAKING: 'breaking'
+  RISING: 'rising',
+  ESTABLISHED: 'established',
+  BREAKOUT: 'breakout'
 };
 
 export const STAGE_THRESHOLDS = {
   [STAGES.BEDROOM]: { min: 0, max: 500 },
-  [STAGES.LOCAL]: { min: 500, max: 5000 },
-  [STAGES.REGIONAL]: { min: 5000, max: 25000 },
-  [STAGES.BREAKING]: { min: 25000, max: Infinity }
+  [STAGES.RISING]: { min: 500, max: 5000 },
+  [STAGES.ESTABLISHED]: { min: 5000, max: 25000 },
+  [STAGES.BREAKOUT]: { min: 25000, max: Infinity }
 };
 
 /**
  * Calculate creator stage based on monthly listeners
  * @param {number} monthlyListeners - Number of monthly listeners
- * @returns {string} Stage identifier (bedroom, local, regional, breaking)
+ * @returns {string} Stage identifier (bedroom, rising, established, breakout)
  */
 export function calculateStage(monthlyListeners) {
   if (monthlyListeners < 0) {
     throw new Error('Monthly listeners cannot be negative');
   }
 
-  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.LOCAL].min) {
+  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.RISING].min) {
     return STAGES.BEDROOM;
   }
   
-  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.REGIONAL].min) {
-    return STAGES.LOCAL;
+  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.ESTABLISHED].min) {
+    return STAGES.RISING;
   }
   
-  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.BREAKING].min) {
-    return STAGES.REGIONAL;
+  if (monthlyListeners < STAGE_THRESHOLDS[STAGES.BREAKOUT].min) {
+    return STAGES.ESTABLISHED;
   }
   
-  return STAGES.BREAKING;
+  return STAGES.BREAKOUT;
 }
 
 /**
@@ -50,9 +50,9 @@ export function calculateStage(monthlyListeners) {
 export function getStageDisplayName(stage) {
   const names = {
     [STAGES.BEDROOM]: 'Bedroom',
-    [STAGES.LOCAL]: 'Local',
-    [STAGES.REGIONAL]: 'Regional',
-    [STAGES.BREAKING]: 'Breaking'
+    [STAGES.RISING]: 'Rising',
+    [STAGES.ESTABLISHED]: 'Established',
+    [STAGES.BREAKOUT]: 'Breakout'
   };
   return names[stage] || 'Unknown';
 }

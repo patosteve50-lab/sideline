@@ -66,7 +66,7 @@ export const bedroomArtistWithCapture = {
 export const localArtist = {
   id: 'local-001',
   name: 'Local Artist',
-  stage: STAGES.LOCAL,
+  stage: STAGES.RISING,
   metrics: {
     monthlyListeners: 2500,
     followers: {
@@ -94,7 +94,7 @@ export const localArtist = {
 export const localArtistNoCapture = {
   id: 'local-002',
   name: 'Local Artist No Capture',
-  stage: STAGES.LOCAL,
+  stage: STAGES.RISING,
   metrics: {
     monthlyListeners: 3500,
     followers: {
@@ -122,7 +122,7 @@ export const localArtistNoCapture = {
 export const regionalArtist = {
   id: 'regional-001',
   name: 'Regional Artist',
-  stage: STAGES.REGIONAL,
+  stage: STAGES.ESTABLISHED,
   metrics: {
     monthlyListeners: 12000,
     followers: {
@@ -150,7 +150,7 @@ export const regionalArtist = {
 export const breakingArtist = {
   id: 'breaking-001',
   name: 'Breaking Artist',
-  stage: STAGES.BREAKING,
+  stage: STAGES.BREAKOUT,
   metrics: {
     monthlyListeners: 35000,
     followers: {

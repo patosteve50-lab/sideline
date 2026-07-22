@@ -290,7 +290,7 @@ describe('Release Rules', () => {
 
     test('all rules should apply to all stages or specific stages', () => {
       releaseRules.forEach(rule => {
-        expect(['all', STAGES.BEDROOM, STAGES.LOCAL, STAGES.REGIONAL, STAGES.BREAKING]).toContain(rule.stage);
+        expect(['all', STAGES.BEDROOM, STAGES.RISING, STAGES.ESTABLISHED, STAGES.BREAKOUT]).toContain(rule.stage);
       });
     });
 

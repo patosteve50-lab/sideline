@@ -216,7 +216,7 @@ describe('Budget Rules', () => {
     });
 
     test('local rules should only apply to local stage', () => {
-      const localRules = budgetRules.filter(r => r.stage === STAGES.LOCAL);
+      const localRules = budgetRules.filter(r => r.stage === STAGES.RISING);
       
       localRules.forEach(rule => {
         expect(rule.trigger(bedroomArtist, localExpensiveVideo)).toBe(false);
@@ -226,7 +226,7 @@ describe('Budget Rules', () => {
     });
 
     test('regional rules should only apply to regional stage', () => {
-      const regionalRules = budgetRules.filter(r => r.stage === STAGES.REGIONAL);
+      const regionalRules = budgetRules.filter(r => r.stage === STAGES.ESTABLISHED);
       
       regionalRules.forEach(rule => {
         expect(rule.trigger(bedroomArtist, regionalOverBudget)).toBe(false);
@@ -280,8 +280,8 @@ describe('Budget Rules', () => {
     test('block reasons should include heuristic labels', () => {
       budgetRules.forEach(rule => {
         const testProfile = rule.stage === STAGES.BEDROOM ? bedroomArtist :
-                          rule.stage === STAGES.LOCAL ? localArtist :
-                          rule.stage === STAGES.REGIONAL ? regionalArtist :
+                          rule.stage === STAGES.RISING ? localArtist :
+                          rule.stage === STAGES.ESTABLISHED ? regionalArtist :
                           breakingArtist;
         
         const testMove = bedroomExpensiveVideo;
@@ -333,17 +333,17 @@ describe('Budget Rules', () => {
     });
 
     test('should have 2 local rules', () => {
-      const localRules = budgetRules.filter(r => r.stage === STAGES.LOCAL);
+      const localRules = budgetRules.filter(r => r.stage === STAGES.RISING);
       expect(localRules.length).toBe(2);
     });
 
     test('should have 2 regional rules', () => {
-      const regionalRules = budgetRules.filter(r => r.stage === STAGES.REGIONAL);
+      const regionalRules = budgetRules.filter(r => r.stage === STAGES.ESTABLISHED);
       expect(regionalRules.length).toBe(2);
     });
 
     test('should have 1 breaking rule', () => {
-      const breakingRules = budgetRules.filter(r => r.stage === STAGES.BREAKING);
+      const breakingRules = budgetRules.filter(r => r.stage === STAGES.BREAKOUT);
       expect(breakingRules.length).toBe(1);
     });
 

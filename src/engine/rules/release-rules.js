@@ -126,7 +126,7 @@ export const releaseRequiresCapture = {
 };
 
 /**
- * Block releases spaced under 6 weeks apart below Regional stage
+ * Block releases spaced under 6 weeks apart below Established stage
  */
 export const releaseSpacingMinimum = {
   id: 'release-spacing-minimum',
@@ -135,8 +135,8 @@ export const releaseSpacingMinimum = {
   priority: 3,
   
   trigger: (profile, move) => {
-    // Only applies below Regional stage
-    if (profile.stage === STAGES.REGIONAL || profile.stage === STAGES.BREAKING) {
+    // Only applies below Established stage
+    if (profile.stage === STAGES.ESTABLISHED || profile.stage === STAGES.BREAKOUT) {
       return false;
     }
     
@@ -179,7 +179,7 @@ export const releaseSpacingMinimum = {
            `Your ${daysBetween}-day spacing gives each track only ${daysBetween} days of curator attention ` +
            `before the next release diverts focus—cutting ${daysLostPerTrack} days from the discovery window. ` +
            `Algorithm momentum builds over 3 weeks; rapid releases reset this cycle before it peaks.\n\n` +
-           `Heuristic (industry pattern): Below Regional stage, 6-8 week spacing allows each release ` +
+           `Heuristic (industry pattern): Below Established stage, 6-8 week spacing allows each release ` +
            `to complete its growth cycle (playlist discovery, algorithm momentum, audience engagement) ` +
            `before the next release. Faster cadence cannibalizes each track's potential.`;
   },

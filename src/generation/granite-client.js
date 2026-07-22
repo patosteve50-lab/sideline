@@ -10,6 +10,7 @@ const REPLICATE_API_URL = 'https://api.replicate.com/v1/predictions';
 const MODEL_VERSION = 'ibm-granite/granite-3.3-8b-instruct';
 const MAX_POLL_ATTEMPTS = 60; // 60 attempts * 2 seconds = 2 minutes max
 const POLL_INTERVAL_MS = 2000; // Poll every 2 seconds
+const GENERATION_TIMEOUT_MS = 120000; // 120 seconds timeout
 
 /**
  * System message establishing the voice
@@ -83,7 +84,7 @@ async function createPrediction(prompt, apiToken) {
       input: {
         prompt: prompt,
         system_prompt: SYSTEM_MESSAGE,
-        max_tokens: 2048,
+        max_tokens: 1000,
         temperature: 0.7,
         top_p: 0.9,
         top_k: 50
@@ -100,12 +101,18 @@ async function createPrediction(prompt, apiToken) {
 }
 
 /**
- * Poll prediction status until complete
+ * Poll prediction status until complete with timeout
  */
-async function pollPrediction(predictionUrl, apiToken) {
+async function pollPrediction(predictionUrl, apiToken, timeoutMs = GENERATION_TIMEOUT_MS) {
   let attempts = 0;
+  const startTime = Date.now();
   
   while (attempts < MAX_POLL_ATTEMPTS) {
+    // Check timeout
+    if (Date.now() - startTime > timeoutMs) {
+      throw new Error(`Prediction timed out after ${timeoutMs / 1000} seconds`);
+    }
+    
     const response = await fetch(predictionUrl, {
       headers: {
         'Authorization': `Bearer ${apiToken}`,
@@ -197,9 +204,9 @@ export async function generateCreativeOutput(redirectAction, profile, move, opti
       };
     }
     
-    // Otherwise, poll until complete
+    // Otherwise, poll until complete (with 120s timeout)
     console.log(`⏳ Prediction created (ID: ${prediction.id}), polling for completion...`);
-    const completedPrediction = await pollPrediction(prediction.urls.get, apiToken);
+    const completedPrediction = await pollPrediction(prediction.urls.get, apiToken, GENERATION_TIMEOUT_MS);
     
     const output = extractOutput(completedPrediction);
     

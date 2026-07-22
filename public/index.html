@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sideline — Creative Decision Partner</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">Sideline</h1>
+      <p class="tagline">Creative decision partner for independent musicians</p>
+    </header>
+
+    <main class="layout">
+      <!-- Input Panel -->
+      <section class="panel input-panel">
+        <h2>Your Profile</h2>
+        
+        <div class="form-group form-group-secondary">
+          <label for="artistName">Artist Name</label>
+          <input type="text" id="artistName" value="Bedroom Artist" />
+        </div>
+
+        <div class="form-group form-group-primary">
+          <label for="monthlyListeners">Monthly Listeners</label>
+          <input type="number" id="monthlyListeners" value="250" oninput="updateStageIndicator()" />
+          <div id="stageIndicator" class="stage-indicator"></div>
+        </div>
+
+        <div class="form-group form-group-primary">
+          <label for="budgetAvailable">Budget Available ($)</label>
+          <input type="number" id="budgetAvailable" value="500" />
+        </div>
+
+        <div class="form-group toggle-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="hasEmailList" class="toggle-input" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Has Email List</span>
+          </label>
+        </div>
+
+        <div class="form-group toggle-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="hasWhatsApp" class="toggle-input" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Has WhatsApp List</span>
+          </label>
+        </div>
+
+        <h2>Planned Move</h2>
+
+        <div class="form-group form-group-secondary">
+          <label for="moveDescription">Description</label>
+          <input type="text" id="moveDescription" value="Professional music video production" />
+        </div>
+
+        <div class="form-group form-group-primary">
+          <label for="totalBudget">Total Budget ($)</label>
+          <input type="number" id="totalBudget" value="300" />
+        </div>
+
+        <div class="form-group">
+          <label>Line Items</label>
+          <div id="lineItems">
+            <div class="line-item">
+              <input type="text" class="line-item-name" placeholder="Item name" value="Music Video Production" />
+              <input type="number" class="line-item-amount" placeholder="Amount" value="300" />
+              <button type="button" class="btn-remove" onclick="removeLineItem(this)">×</button>
+            </div>
+          </div>
+          <button type="button" class="btn-secondary" onclick="addLineItem()">+ Add Line Item</button>
+        </div>
+
+        <div class="form-group toggle-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="forceMock" class="toggle-input" />
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Force Mock Mode</span>
+          </label>
+        </div>
+
+        <div class="sticky-button-container">
+          <button type="button" class="btn-primary" onclick="runAssessment()">Assess Move</button>
+        </div>
+      </section>
+
+      <!-- Results Panel -->
+      <section class="panel results-panel">
+        <div id="results" class="results-empty">
+          <div class="empty-state">
+            <h3 class="empty-state-title">Most tools help you spend.<br>This one tells you when not to.</h3>
+            <div class="empty-state-process">
+              <div class="process-step">
+                <div class="process-number">1</div>
+                <div class="process-label">Assess</div>
+                <div class="process-desc">Evaluate your planned move against stage-specific rules</div>
+              </div>
+              <div class="process-arrow">→</div>
+              <div class="process-step">
+                <div class="process-number">2</div>
+                <div class="process-label">Block</div>
+                <div class="process-desc">Identify why the spend doesn't make sense at your stage</div>
+              </div>
+              <div class="process-arrow">→</div>
+              <div class="process-step">
+                <div class="process-number">3</div>
+                <div class="process-label">Redirect</div>
+                <div class="process-desc">Generate a better creative path that respects your constraints</div>
+              </div>
+            </div>
+            <p class="empty-state-cta">Configure your profile and click "Assess Move" to begin.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

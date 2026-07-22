@@ -46,7 +46,7 @@ function generateBudgetBreakdown(constraints) {
   
   // Handle special case: regional PR alternatives
   if (constraints.option1 && constraints.option2) {
-    return `TWO STRATEGIC ALTERNATIVES FOR REGIONAL STAGE
+    return `TWO STRATEGIC ALTERNATIVES FOR ESTABLISHED STAGE
 
 OPTION 1: 3-MONTH PR RETAINER ($1,200)
 
@@ -118,7 +118,7 @@ RECOMMENDATION:
 If you have 3 months before your release and want press credibility: Choose Option 1.
 If you need faster results and want to own the relationships: Choose Option 2.
 
-At Regional stage with 12,000 monthly listeners, both approaches are viable. Option 2 gives you more control and faster feedback, while Option 1 builds long-term media relationships.`;
+At Established stage with 12,000 monthly listeners, both approaches are viable. Option 2 gives you more control and faster feedback, while Option 1 builds long-term media relationships.`;
   }
   
   const stage = getStageFromConstraints(constraints);
@@ -161,8 +161,8 @@ WHY THIS WORKS:
 Multiple content pieces give you more chances for algorithmic discovery. Each video is a separate lottery ticket. The $150 spread across content + capture builds both visibility AND ownership of your audience—the two things that compound over time.`;
   }
   
-  if (stage === 'local') {
-    return `BUDGET BREAKDOWN - LOCAL STAGE ($${maxBudget} MAX)
+  if (stage === 'rising') {
+    return `BUDGET BREAKDOWN - RISING STAGE ($${maxBudget} MAX)
 
 CONTENT CREATION: $150
 • Rent basic DSLR or mirrorless camera (1 day): $50
@@ -193,7 +193,7 @@ TOTAL: $400
 
 EXPECTED OUTCOMES:
 • 1 high-quality video asset + social cutdowns
-• 2-3 playlist placements (realistic for Local stage)
+• 2-3 playlist placements (realistic for Rising stage)
 • 10-20 new email subscribers with proven conversion path
 • Data on ad performance and cost-per-acquisition
 
@@ -201,8 +201,8 @@ WHY THIS WORKS:
 This splits budget between visibility (content + playlists) and capture (ads to landing page). You're not just buying streams—you're building a list you own. The playlist strategy targets realistic placements at your stage, not pipe dreams.`;
   }
   
-  if (stage === 'regional') {
-    return `BUDGET BREAKDOWN - REGIONAL STAGE ($${maxBudget} MAX)
+  if (stage === 'established') {
+    return `BUDGET BREAKDOWN - ESTABLISHED STAGE ($${maxBudget} MAX)
 
 CONTENT PRODUCTION: $500
 • Professional videographer (day rate): $300
@@ -245,11 +245,11 @@ EXPECTED OUTCOMES:
 • Validated conversion funnel for future campaigns
 
 WHY THIS WORKS:
-At Regional stage, you have enough audience to test paid acquisition profitably. This budget validates your unit economics: if you can acquire email subscribers at $5-10 each and convert them to streams/merch buyers, you've found a scalable model. The multi-channel approach tests where your audience lives.`;
+At Established stage, you have enough audience to test paid acquisition profitably. This budget validates your unit economics: if you can acquire email subscribers at $5-10 each and convert them to streams/merch buyers, you've found a scalable model. The multi-channel approach tests where your audience lives.`;
   }
   
-  // Default/Breaking stage
-  return `BUDGET BREAKDOWN - BREAKING STAGE ($${maxBudget} MAX)
+  // Default/Breakout stage
+  return `BUDGET BREAKDOWN - BREAKOUT STAGE ($${maxBudget} MAX)
 
 CONTENT PRODUCTION: $1,500
 • Professional video production (2-day shoot): $1,000
@@ -297,7 +297,7 @@ Before executing this budget, you need:
 4. Attribution tracking infrastructure in place
 
 WHY THIS WORKS (IF VALIDATED):
-At Breaking stage with proven unit economics, this budget scales what's already working. You're not experimenting—you're amplifying validated channels. The 3-month PR retainer gives time for relationships to mature and placements to materialize.`;
+At Breakout stage with proven unit economics, this budget scales what's already working. You're not experimenting—you're amplifying validated channels. The 3-month PR retainer gives time for relationships to mature and placements to materialize.`;
 }
 
 /**

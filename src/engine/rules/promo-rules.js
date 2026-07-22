@@ -7,7 +7,7 @@ import { STAGES } from '../stage-calculator.js';
 import { SEVERITY, CATEGORY, OUTPUT_FORMAT } from './rule-types.js';
 
 /**
- * Block any paid ad spend below Local stage
+ * Block any paid ad spend below Rising stage
  */
 export const paidAdsMinimumStage = {
   id: 'promo-paid-ads-minimum-stage',
@@ -155,7 +155,7 @@ export const paidAdsRequireCapture = {
 };
 
 /**
- * Block playlist pitching services below Regional stage
+ * Block playlist pitching services below Established stage
  */
 export const playlistServicesMinimumStage = {
   id: 'promo-playlist-services-minimum-stage',
@@ -173,7 +173,7 @@ export const playlistServicesMinimumStage = {
     );
     
     const isBelowRegional = profile.stage === STAGES.BEDROOM || 
-                           profile.stage === STAGES.LOCAL;
+                           profile.stage === STAGES.RISING;
     
     return isPlaylistService && isBelowRegional;
   },
@@ -201,7 +201,7 @@ export const playlistServicesMinimumStage = {
            `that's ${directOutreachTime.toFixed(1)} hours for ~${curatorOutreachCount} direct curator outreaches. ` +
            `Services prioritize artists with proven traction (5,000+ listeners) because curators ` +
            `receive 100+ daily submissions—yours competes in a saturated pool.\n\n` +
-           `Heuristic (industry pattern): Below Regional stage, direct outreach to independent curators ` +
+           `Heuristic (industry pattern): Below Established stage, direct outreach to independent curators ` +
            `(free, personalized) has better success rates than paid services because you can target ` +
            `curators who specifically support emerging artists in your genre.`;
   },
@@ -239,7 +239,7 @@ export const playlistServicesMinimumStage = {
 };
 
 /**
- * Block PR/publicist hire below Regional stage
+ * Block PR/publicist hire below Established stage
  */
 export const publicistMinimumStage = {
   id: 'promo-publicist-minimum-stage',
@@ -256,7 +256,7 @@ export const publicistMinimumStage = {
     );
     
     const isBelowRegional = profile.stage === STAGES.BEDROOM || 
-                           profile.stage === STAGES.LOCAL;
+                           profile.stage === STAGES.RISING;
     
     return isPR && isBelowRegional;
   },
@@ -285,7 +285,7 @@ export const publicistMinimumStage = {
            `PR firms prioritize artists with existing metrics because journalists need a story—` +
            `without notable numbers or press clips, there's nothing to pitch.\n\n` +
            `Heuristic (industry pattern): PR works when you have a story to tell (milestone reached, ` +
-           `unique angle, proven traction). Below Regional stage, focus on building that story first: ` +
+           `unique angle, proven traction). Below Established stage, focus on building that story first: ` +
            `reach 5,000 listeners, get playlist adds, create compelling content. Then PR has material to work with.`;
   },
   
