@@ -24,7 +24,19 @@ function removeLineItem(button) {
 // Collect form data
 function collectFormData() {
   const artistName = document.getElementById('artistName').value;
-  const monthlyListeners = parseInt(document.getElementById('monthlyListeners').value) || 0;
+  const monthlyListenersInput = document.getElementById('monthlyListeners');
+  
+  // Use explicit listener count if provided, otherwise use stage default
+  let monthlyListeners = parseInt(monthlyListenersInput.value);
+  if (!monthlyListeners || monthlyListeners === 0) {
+    const selectedCard = document.querySelector('.stage-card.selected');
+    if (selectedCard) {
+      monthlyListeners = parseInt(selectedCard.getAttribute('data-listeners'));
+    } else {
+      monthlyListeners = 250; // Fallback default
+    }
+  }
+  
   const budgetAvailable = parseInt(document.getElementById('budgetAvailable').value) || 0;
   const hasEmailList = document.getElementById('hasEmailList').checked;
   const hasWhatsApp = document.getElementById('hasWhatsApp').checked;
@@ -101,12 +113,24 @@ function escapeHtml(text) {
 // Display assessment results (without generated outputs)
 function displayResults(data) {
   const resultsDiv = document.getElementById('results');
-  const { assessment, profile } = data;
+  const { assessment, profile, classification } = data;
   
   let html = '';
   
   // Stage badge
   html += `<div class="stage-badge">${profile.stage} Stage</div>`;
+  
+  // Classification (if available)
+  if (classification && classification.summary) {
+    html += '<div class="classification-section">';
+    html += '<div class="classification-header">Understood:</div>';
+    html += `<div class="classification-summary">${escapeHtml(classification.summary)}</div>`;
+    html += `<div class="classification-type">Move Type: <strong>${classification.moveType.replace(/_/g, ' ').toUpperCase()}</strong></div>`;
+    if (classification.impliedNeeds && classification.impliedNeeds.length > 0) {
+      html += '<div class="classification-needs">Goals: ' + classification.impliedNeeds.map(n => escapeHtml(n)).join(', ') + '</div>';
+    }
+    html += '</div>';
+  }
   
   // Verdict
   const verdictClass = assessment.overallDecision === 'blocked' ? 'blocked' : 
@@ -180,7 +204,7 @@ function displayResults(data) {
 }
 
 // Generate creative output for a single rule
-async function generateOutput(ruleIndex, rule, profile, move, forceMock) {
+async function generateOutput(ruleIndex, rule, profile, move, classification, forceMock) {
   const redirectDiv = document.getElementById(`redirect-${ruleIndex}`);
   
   try {
@@ -193,6 +217,7 @@ async function generateOutput(ruleIndex, rule, profile, move, forceMock) {
         redirectAction: rule.redirectAction,
         profile,
         move,
+        classification,
         forceMock
       })
     });
@@ -235,6 +260,18 @@ async function generateOutput(ruleIndex, rule, profile, move, forceMock) {
   }
 }
 
+// Check if model needs warmup
+async function checkWarmupStatus() {
+  try {
+    const response = await fetch('/api/warmup-status');
+    const data = await response.json();
+    return data.isWarm;
+  } catch (error) {
+    console.error('Warmup status check failed:', error);
+    return true; // Assume warm on error
+  }
+}
+
 // Run assessment
 async function runAssessment() {
   const resultsDiv = document.getElementById('results');
@@ -243,6 +280,23 @@ async function runAssessment() {
   // Disable button
   button.disabled = true;
   button.textContent = 'Assessing...';
+  
+  // Check if model is warm
+  const isWarm = await checkWarmupStatus();
+  
+  if (!isWarm) {
+    // Show warming state
+    resultsDiv.innerHTML = `
+      <div class="results-loading">
+        <div class="spinner"></div>
+        <p>Warming up Granite model...</p>
+        <p style="color: var(--text-dim); font-size: 0.875rem; margin-top: 0.5rem;">First request may take 30-60 seconds</p>
+      </div>
+    `;
+    
+    // Wait a bit for warmup to complete
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
   
   // Show loading state
   resultsDiv.innerHTML = `
@@ -286,7 +340,7 @@ async function runAssessment() {
     for (let i = 0; i < assessment.triggeredRules.length; i++) {
       const rule = assessment.triggeredRules[i];
       if (rule.severity === 'block' && rule.redirectAction) {
-        await generateOutput(i, rule, formData.profile, formData.move, formData.forceMock);
+        await generateOutput(i, rule, formData.profile, formData.move, data.classification, formData.forceMock);
       }
     }
     
@@ -312,22 +366,29 @@ function calculateStage(monthlyListeners) {
   return 'BREAKOUT';
 }
 
-// Update stage indicator
-function updateStageIndicator() {
-  const monthlyListeners = parseInt(document.getElementById('monthlyListeners').value) || 0;
-  const indicator = document.getElementById('stageIndicator');
+// Select stage card
+function selectStage(card) {
+  // Remove selected class from all cards
+  document.querySelectorAll('.stage-card').forEach(c => c.classList.remove('selected'));
   
-  if (monthlyListeners > 0) {
-    const stage = calculateStage(monthlyListeners);
-    indicator.textContent = `${stage} Stage`;
-    indicator.classList.add('visible');
-  } else {
-    indicator.classList.remove('visible');
+  // Add selected class to clicked card
+  card.classList.add('selected');
+  
+  // Set the default listeners for this stage (but don't override if user has entered a value)
+  const monthlyListenersInput = document.getElementById('monthlyListeners');
+  if (!monthlyListenersInput.value) {
+    const defaultListeners = card.getAttribute('data-listeners');
+    monthlyListenersInput.setAttribute('data-stage-default', defaultListeners);
   }
 }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   console.log('Sideline web UI loaded');
-  updateStageIndicator();
+  
+  // Select first stage card by default
+  const firstCard = document.querySelector('.stage-card');
+  if (firstCard) {
+    selectStage(firstCard);
+  }
 });

@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { evaluateMove } from '../engine/evaluator.js';
 import { calculateStage } from '../engine/stage-calculator.js';
 import { generateCreativeOutput } from '../generation/granite-client.js';
+import { classifyMove } from '../generation/intent-classifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,7 +67,7 @@ app.use(express.static(path.join(__dirname, '../../public')));
  */
 app.post('/api/assess', async (req, res) => {
   try {
-    const { profile, move } = req.body;
+    const { profile, move, forceMock = false } = req.body;
     
     // Validate input
     if (!profile || !move) {
@@ -75,18 +76,75 @@ app.post('/api/assess', async (req, res) => {
       });
     }
     
-    // Ensure profile has stage calculated
-    if (!profile.stage) {
-      profile.stage = calculateStage(profile.metrics.monthlyListeners);
+    // Wait for warmup to complete before classification (prevents cold model timeout)
+    if (!forceMock && process.env.REPLICATE_API_TOKEN) {
+      await getWarmupPromise();
     }
     
-    // Run evaluation (engine only, instant)
-    const assessment = evaluateMove(profile, move);
+    // Ensure profile has stage calculated
+    // If monthlyListeners is 0 or very low, treat as stage-only mode
+    const listeners = profile.metrics.monthlyListeners || 0;
+    const isStageOnlyMode = listeners === 0 || !profile.metrics.monthlyListeners;
     
-    // Return assessment without generated outputs
+    if (!profile.stage) {
+      // If no listeners provided, infer stage from other context or default to bedroom
+      if (isStageOnlyMode) {
+        profile.stage = 'bedroom'; // Will be overridden by frontend stage selection
+      } else {
+        profile.stage = calculateStage(listeners);
+      }
+    }
+    
+    // Mark profile as stage-only mode for rules to use
+    profile.stageOnlyMode = isStageOnlyMode;
+    
+    // Classify the move intent FIRST
+    const classification = await classifyMove(
+      move.description || '',
+      move.budget || 0,
+      move.lineItems || [],
+      { forceMock }
+    );
+    
+    // Classification lineItems REPLACE form lineItems (classification is source of truth)
+    let finalLineItems = classification.lineItems.length > 0 ? classification.lineItems : (move.lineItems || []);
+    
+    // CRITICAL: If no line items exist, create a default one from total budget
+    // This ensures budget cap rules can still evaluate the spend
+    if (finalLineItems.length === 0 && move.budget > 0) {
+      finalLineItems = [{
+        name: move.description || 'Planned spending',
+        amount: move.budget,
+        category: 'general'
+      }];
+      console.log('⚠️  No line items provided, created default line item from total budget');
+    }
+    
+    const enrichedMove = {
+      ...move,
+      type: move.type || 'spend',
+      moveType: classification.moveType,
+      lineItems: finalLineItems,
+      classification: {
+        summary: classification.summary,
+        impliedNeeds: classification.impliedNeeds,
+        source: classification.source
+      }
+    };
+    
+    // Run evaluation (engine only, instant)
+    const assessment = evaluateMove(profile, enrichedMove);
+    
+    // Return assessment with classification
     res.json({
       success: true,
       assessment,
+      classification: {
+        moveType: classification.moveType,
+        summary: classification.summary,
+        impliedNeeds: classification.impliedNeeds,
+        source: classification.source
+      },
       profile: {
         stage: profile.stage,
         name: profile.name,
@@ -109,7 +167,7 @@ app.post('/api/assess', async (req, res) => {
  */
 app.post('/api/generate', rateLimitMiddleware, async (req, res) => {
   try {
-    const { redirectAction, profile, move, forceMock = false } = req.body;
+    const { redirectAction, profile, move, classification, forceMock = false } = req.body;
     
     // Validate input
     if (!redirectAction || !profile || !move) {
@@ -118,12 +176,12 @@ app.post('/api/generate', rateLimitMiddleware, async (req, res) => {
       });
     }
     
-    // Generate creative output
+    // Generate creative output with classification context
     const generationResult = await generateCreativeOutput(
       redirectAction,
       profile,
       move,
-      { forceMock }
+      { forceMock, classification }
     );
     
     res.json({
@@ -151,6 +209,30 @@ app.get('/api/health', (req, res) => {
     hasReplicateToken: !!process.env.REPLICATE_API_TOKEN
   });
 });
+
+/**
+ * GET /api/warmup-status
+ * Check if Granite model warmup is complete
+ */
+app.get('/api/warmup-status', async (req, res) => {
+  if (!process.env.REPLICATE_API_TOKEN) {
+    return res.json({
+      isWarm: true,
+      usingMock: true
+    });
+  }
+  
+  // Check if warmup promise exists and is settled
+  const isWarm = warmupPromise !== null;
+  
+  res.json({
+    isWarm,
+    usingMock: false
+  });
+});
+
+// Warmup promise - resolves when Granite model is warm
+let warmupPromise = null;
 
 // Warmup Granite model (background, non-blocking)
 async function warmupGranite() {
@@ -185,6 +267,14 @@ async function warmupGranite() {
   } catch (error) {
     console.log('⚠️  Granite warmup failed (will use mock):', error.message);
   }
+}
+
+// Get warmup promise (creates it if needed)
+function getWarmupPromise() {
+  if (!warmupPromise) {
+    warmupPromise = warmupGranite();
+  }
+  return warmupPromise;
 }
 
 // Start server

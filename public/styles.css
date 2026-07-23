@@ -308,23 +308,58 @@ header {
   }
 }
 
-.stage-indicator {
-  margin-top: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: var(--bg-primary);
-  border: 1px solid var(--accent);
-  border-radius: 4px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent-bright);
-  display: none;
+.stage-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
-.stage-indicator.visible {
-  display: block;
+.stage-card {
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.stage-card:hover {
+  border-color: var(--accent);
+  background: var(--bg-primary);
+}
+
+.stage-card.selected {
+  border-color: var(--accent-bright);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.stage-card-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.stage-card-range {
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stage-card-desc {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  .stage-cards {
+    grid-template-columns: 1fr;
+  }
 }
 
 .results-panel {
@@ -671,3 +706,44 @@ header {
     padding-top: 1.5rem;
   }
 }
+
+
+.classification-section {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.classification-header {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  margin-bottom: 0.75rem;
+}
+
+.classification-summary {
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.classification-type {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.classification-type strong {
+  color: var(--accent-bright);
+}
+
+.classification-needs {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+

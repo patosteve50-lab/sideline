@@ -23,10 +23,35 @@
           <input type="text" id="artistName" value="Bedroom Artist" />
         </div>
 
-        <div class="form-group form-group-primary">
-          <label for="monthlyListeners">Monthly Listeners</label>
-          <input type="number" id="monthlyListeners" value="250" oninput="updateStageIndicator()" />
-          <div id="stageIndicator" class="stage-indicator"></div>
+        <div class="form-group">
+          <label>Your Stage</label>
+          <div class="stage-cards">
+            <div class="stage-card" data-stage="bedroom" data-listeners="250" onclick="selectStage(this)">
+              <div class="stage-card-title">Just Starting</div>
+              <div class="stage-card-range">0-500 listeners</div>
+              <div class="stage-card-desc">Building from zero</div>
+            </div>
+            <div class="stage-card" data-stage="rising" data-listeners="2500" onclick="selectStage(this)">
+              <div class="stage-card-title">Building</div>
+              <div class="stage-card-range">500-5k listeners</div>
+              <div class="stage-card-desc">Finding traction</div>
+            </div>
+            <div class="stage-card" data-stage="established" data-listeners="15000" onclick="selectStage(this)">
+              <div class="stage-card-title">Growing</div>
+              <div class="stage-card-range">5k-25k listeners</div>
+              <div class="stage-card-desc">Scaling up</div>
+            </div>
+            <div class="stage-card" data-stage="breakout" data-listeners="50000" onclick="selectStage(this)">
+              <div class="stage-card-title">Breaking Through</div>
+              <div class="stage-card-range">25k+ listeners</div>
+              <div class="stage-card-desc">Momentum building</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group form-group-secondary">
+          <label for="monthlyListeners">Monthly Listeners (optional)</label>
+          <input type="number" id="monthlyListeners" placeholder="Leave empty to use stage defaults" />
         </div>
 
         <div class="form-group form-group-primary">

@@ -36,9 +36,9 @@ Your response should:
 Remember: You're not just saying "no"—you're showing them the smarter path forward.`;
 
 /**
- * Compose prompt with constraints injected
+ * Compose prompt with constraints and classification injected
  */
-function composePrompt(redirectAction, profile, move) {
+function composePrompt(redirectAction, profile, move, classification = null) {
   const basePrompt = typeof redirectAction.prompt === 'function'
     ? redirectAction.prompt(profile, move)
     : redirectAction.prompt;
@@ -50,8 +50,25 @@ function composePrompt(redirectAction, profile, move) {
     .map(([key, value]) => `- ${key}: ${JSON.stringify(value)}`)
     .join('\n');
   
+  // Build classification section if available
+  let classificationSection = '';
+  if (classification && classification.summary) {
+    classificationSection = `
+
+WHAT THE ARTIST ACTUALLY WANTS TO DO:
+- Original Description: "${move.description || 'Not provided'}"
+- Understood Intent: ${classification.summary}
+- Move Type: ${classification.moveType || 'other'}
+${classification.impliedNeeds && classification.impliedNeeds.length > 0 
+  ? `- Underlying Goals: ${classification.impliedNeeds.join(', ')}` 
+  : ''}
+
+IMPORTANT: Your redirect must address their SPECIFIC situation described above, not a generic scenario.`;
+  }
+  
   // Compose full prompt
   return `${basePrompt}
+${classificationSection}
 
 CONSTRAINTS TO RESPECT:
 ${constraintsList}
@@ -168,7 +185,7 @@ function extractOutput(prediction) {
  * Falls back to mock generator on any error
  */
 export async function generateCreativeOutput(redirectAction, profile, move, options = {}) {
-  const { forceMock = false } = options;
+  const { forceMock = false, classification = null } = options;
   const apiToken = process.env.REPLICATE_API_TOKEN;
   
   // If forceMock flag is set, use mock immediately
@@ -184,8 +201,8 @@ export async function generateCreativeOutput(redirectAction, profile, move, opti
   }
   
   try {
-    // Compose prompt with constraints
-    const prompt = composePrompt(redirectAction, profile, move);
+    // Compose prompt with constraints and classification
+    const prompt = composePrompt(redirectAction, profile, move, classification);
     
     console.log('🤖 Generating creative output via Granite (Replicate API)...');
     

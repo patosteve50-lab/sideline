@@ -26,14 +26,29 @@ export const albumMinimumAudience = {
   blockReason: (profile, move) => {
     const format = move.releaseDetails.format;
     const trackCount = move.releaseDetails.trackCount || 'multiple';
-    const deficit = 2500 - profile.metrics.monthlyListeners;
-    const percentageOfTarget = ((profile.metrics.monthlyListeners / 2500) * 100).toFixed(0);
-    const streamsPerTrack = Math.floor(profile.metrics.monthlyListeners / trackCount);
+    const listeners = profile.metrics.monthlyListeners;
+    const deficit = 2500 - listeners;
+    const percentageOfTarget = ((listeners / 2500) * 100).toFixed(0);
+    const stageOnlyMode = profile.stageOnlyMode || listeners < 50;
     
-    return `Releasing an ${format} (${trackCount} tracks) at ${formatNumber(profile.metrics.monthlyListeners)} ` +
+    // Handle stage-only mode or zero/low listener case
+    if (stageOnlyMode) {
+      return `Releasing an ${format} (${trackCount} tracks) is premature. ` +
+             `You need 2,500+ listeners for ${format} releases.\n\n` +
+             `At this stage, the constraint is building an audience from zero. An ${format} with ${trackCount} tracks ` +
+             `means ${trackCount} songs competing for attention from an audience that doesn't exist yet. ` +
+             `Each single release is a separate discovery opportunity—${trackCount} singles over time gives you ` +
+             `${trackCount} chances to find what resonates and ${trackCount} catalog entries for algorithmic discovery.\n\n` +
+             `Heuristic (industry pattern): Pre-audience artists need singles to test and iterate. ` +
+             `${format}s work when you have an audience waiting for more content, not when you're building from zero.`;
+    }
+    
+    const streamsPerTrack = Math.floor(listeners / trackCount);
+    
+    return `Releasing an ${format} (${trackCount} tracks) at ${formatNumber(listeners)} ` +
            `monthly listeners is premature. You need 2,500+ listeners for ${format} releases—` +
            `you're currently at ${percentageOfTarget}% of that threshold (${formatNumber(deficit)} listeners short).\n\n` +
-           `Arithmetic: With ${trackCount} tracks and ${formatNumber(profile.metrics.monthlyListeners)} monthly listeners, ` +
+           `Arithmetic: With ${trackCount} tracks and ${formatNumber(listeners)} monthly listeners, ` +
            `each track would average ~${formatNumber(streamsPerTrack)} streams in the first month. ` +
            `At 2,500 listeners, each track would average ~${formatNumber(Math.floor(2500 / trackCount))} streams—` +
            `enough to signal playlist algorithms that multiple tracks are gaining traction.\n\n` +
@@ -84,12 +99,26 @@ export const releaseRequiresCapture = {
   
   blockReason: (profile, move) => {
     const format = move.releaseDetails?.format || 'release';
-    const estimatedInterestedFans = Math.floor(profile.metrics.monthlyListeners * 0.05); // Conservative 5% highly engaged
+    const listeners = profile.metrics.monthlyListeners;
+    const stageOnlyMode = profile.stageOnlyMode || listeners < 50;
+    
+    // Handle stage-only mode or zero/low listener case
+    if (stageOnlyMode) {
+      return `Releasing ${format === 'single' ? 'a single' : 'an ' + format} with zero owned ` +
+             `audience capture (no email or WhatsApp list) wastes momentum.\n\n` +
+             `Without capture, every listener you gain through this release disappears back into the algorithm. ` +
+             `You can't notify them about your next release, can't coordinate a launch day push, ` +
+             `can't build a relationship. Each release starts from zero instead of building on the last.\n\n` +
+             `Heuristic (industry pattern): Even 20-30 email signups (achievable in 2-3 weeks pre-release) ` +
+             `give you a coordinated launch day push that algorithms reward with better initial placement.`;
+    }
+    
+    const estimatedInterestedFans = Math.floor(listeners * 0.05); // Conservative 5% highly engaged
     const potentialCaptureValue = estimatedInterestedFans * 0.50; // $0.50 lifetime value per email (conservative)
     
     return `Releasing ${format === 'single' ? 'a single' : 'an ' + format} with zero owned ` +
            `audience capture (no email or WhatsApp list) wastes momentum. ` +
-           `At ${formatNumber(profile.metrics.monthlyListeners)} monthly listeners, you're relying entirely ` +
+           `At ${formatNumber(listeners)} monthly listeners, you're relying entirely ` +
            `on platform algorithms.\n\n` +
            `Arithmetic: Conservatively, ~${formatNumber(estimatedInterestedFans)} of your listeners ` +
            `(5% highly engaged) would join an email list if offered. ` +
@@ -166,13 +195,27 @@ export const releaseSpacingMinimum = {
     const weeksBetween = (daysBetween / 7).toFixed(1);
     const weeksShort = (6 - parseFloat(weeksBetween)).toFixed(1);
     const daysShort = Math.ceil(weeksShort * 7);
+    const listeners = profile.metrics.monthlyListeners;
+    const stageOnlyMode = profile.stageOnlyMode || listeners < 50;
+    
+    // Handle stage-only mode or zero/low listener case
+    if (stageOnlyMode) {
+      return `At ${profile.stage} stage, releasing tracks ${weeksBetween} weeks apart is too frequent. ` +
+             `You need minimum 6 weeks between releases—you're ${weeksShort} weeks (${daysShort} days) short.\n\n` +
+             `With minimal audience, rapid releases don't build on each other—they compete for the same ` +
+             `non-existent attention. Each release needs 6-8 weeks to find its audience through algorithmic ` +
+             `discovery, playlist consideration, and organic sharing. Releasing faster means each track ` +
+             `gets abandoned before it has a chance to gain traction.\n\n` +
+             `Heuristic (industry pattern): Pre-audience artists need time between releases to let each track ` +
+             `complete its discovery cycle. Faster cadence creates a catalog of under-performing tracks.`;
+    }
     
     // Calculate opportunity cost
     const playlistDiscoveryWindow = 28; // 4 weeks for playlist curators to discover
     const algorithmMomentumWindow = 21; // 3 weeks for algorithm to build momentum
     const daysLostPerTrack = Math.max(0, playlistDiscoveryWindow - daysBetween);
     
-    return `At ${profile.stage} stage (${formatNumber(profile.metrics.monthlyListeners)} monthly listeners), ` +
+    return `At ${profile.stage} stage (${formatNumber(listeners)} monthly listeners), ` +
            `releasing tracks ${weeksBetween} weeks apart is too frequent. ` +
            `You need minimum 6 weeks between releases—you're ${weeksShort} weeks (${daysShort} days) short.\n\n` +
            `Arithmetic: Playlist curators typically need 4 weeks (28 days) to discover and add tracks. ` +
