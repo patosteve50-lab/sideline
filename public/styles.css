@@ -634,6 +634,21 @@ header {
   margin-top: 1rem;
 }
 
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer p {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 @media (max-width: 767px) {
   .container {
     padding: 1rem;
@@ -649,5 +664,10 @@ header {
   
   .panel {
     padding: 1.5rem;
+  }
+  
+  .footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
   }
 }

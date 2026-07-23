@@ -16,6 +16,46 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Rate limiting for /api/generate (in-memory, 20 requests per IP per hour)
+const rateLimitStore = new Map();
+const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
+const RATE_LIMIT_MAX = 20;
+
+function rateLimitMiddleware(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  
+  // Clean up old entries
+  for (const [key, data] of rateLimitStore.entries()) {
+    if (now - data.resetTime > RATE_LIMIT_WINDOW) {
+      rateLimitStore.delete(key);
+    }
+  }
+  
+  // Check rate limit
+  const record = rateLimitStore.get(ip);
+  if (!record) {
+    rateLimitStore.set(ip, { count: 1, resetTime: now });
+    return next();
+  }
+  
+  if (now - record.resetTime > RATE_LIMIT_WINDOW) {
+    // Reset window
+    rateLimitStore.set(ip, { count: 1, resetTime: now });
+    return next();
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX) {
+    return res.status(429).json({
+      success: false,
+      error: 'Rate limit exceeded. Maximum 20 generation requests per hour. Please try again later.'
+    });
+  }
+  
+  record.count++;
+  next();
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../../public')));
@@ -65,9 +105,9 @@ app.post('/api/assess', async (req, res) => {
 
 /**
  * POST /api/generate
- * Generate creative output for a single rule
+ * Generate creative output for a single rule (rate limited)
  */
-app.post('/api/generate', async (req, res) => {
+app.post('/api/generate', rateLimitMiddleware, async (req, res) => {
   try {
     const { redirectAction, profile, move, forceMock = false } = req.body;
     
