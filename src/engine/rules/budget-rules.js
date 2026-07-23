@@ -31,7 +31,7 @@ export const bedroomTotalBudgetCap = {
            `Arithmetic: You're spending $${costPerListener} per existing monthly listener. ` +
            `At the $150 cap, that's $${capCostPerListener} per listener. ` +
            `To break even on the extra ${formatCurrency(overage)}, you'd need to convert ` +
-           `${Math.ceil(overage / 0.01)} new listeners at $0.01 industry-standard streaming value—` +
+           `${Math.ceil(overage / 0.01)} new listeners at $0.01 typical per-stream value (~$0.01)—` +
            `a ${((overage / 0.01) / profile.metrics.monthlyListeners * 100).toFixed(0)}% ` +
            `audience increase.\n\n` +
            `Heuristic (industry pattern): Bedroom artists rarely see returns that justify ` +
